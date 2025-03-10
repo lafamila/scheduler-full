@@ -1,36 +1,42 @@
 {% extends "_template.html" %}
 {% block css %}
-    <link rel="stylesheet" href="/static/daily.css"/>
+    <link rel="stylesheet" href="/static/week.css"/>
 {% endblock %}
 {% block main %}
     <div class="date-container">
         <button class="date-control" id="date-prev"><</button>
-        <span id="date">Today</span>
+        <span id="date-start">3/10</span>
+        <span>~</span>
+        <span id="date-end">3/16</span>
         <button class="date-control" id="date-next">></button>
     </div>
     <div class="table-container">
         <table>
             <colgroup>
+                <col width="20%"/>
                 <col width="10%"/>
-                <col width="80%"/>
+                <col width="60%"/>
                 <col width="10%"/>
             </colgroup>
             <thead>
 
             </thead>
             <tbody>
-                {% for i in range(100) %}
+                {% for i in range(1) %}
                 <tr>
+                    <td>월요일</td>
                     <td>1</td>
                     <td>세수하기</td>
                     <td>done?</td>
                 </tr>
                 <tr>
+                    <td>월요일</td>
                     <td>1</td>
                     <td>세수하기</td>
                     <td>done?</td>
                 </tr>
                 <tr>
+                    <td>월요일</td>
                     <td>1</td>
                     <td>세수하기</td>
                     <td>done?</td>

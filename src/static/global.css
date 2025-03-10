@@ -1,0 +1,148 @@
+body{
+    margin: 0!important;
+    padding: 0!important;
+    background-color: #eeeeee;
+    min-width:300px;
+    width: 100vw;
+    height: 100vh;
+    color: black;
+}
+.menu-container div{
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: 36px 36px;
+}
+
+.search-container{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+#search{
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    height: 24px;
+}
+input:focus {outline: none;}
+
+.menu-day{
+    background-image: url(/static/icons/before.png);
+}
+.menu-day:hover{
+    background-image: url(/static/icons/after.png);
+}
+.menu-week{
+    background-image: url(/static/icons/before.png);
+}
+.menu-week:hover{
+    background-image: url(/static/icons/after.png);
+}
+
+.menu-month{
+    background-image: url(/static/icons/before.png);
+}
+.menu-month:hover{
+    background-image: url(/static/icons/after.png);
+}
+
+.menu-year{
+    background-image: url(/static/icons/before.png);
+}
+.menu-year:hover{
+    background-image: url(/static/icons/after.png);
+}
+
+.menu-container{
+    background-color: blue;
+    opacity: 0.5;
+}
+.search-container{
+    background-color: red;
+    opacity: 0.5;
+}
+.main-container{
+    background-color: green;
+    opacity: 0.5;
+}
+
+@media screen and (max-width: 767px) {
+  /* 스마트폰 전용 스타일 */
+    body{
+        display: grid;
+        grid-template-rows: 48px 1fr 48px; /*search main menu*/
+        grid-template-columns: 1fr;
+    }
+    .menu-container{
+        grid-row: 3;
+        display: grid;
+        grid-template-columns: 40px 40px 40px 40px;
+        justify-content: center;
+        align-items: center;
+        grid-column-gap: 10px;
+    }
+    .search-container{
+        grid-row: 1;
+    }
+    .main-container{
+        grid-row: 2;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  /* 태블릿 전용 스타일 */
+    body{
+        display: grid;
+        grid-template-rows: 48px 1fr; /* search main */
+        grid-template-columns: 48px 1fr; /* menu search+main*/
+    }
+    .menu-container{
+        grid-row: 1 / span 2;
+        display: grid;
+        grid-template-rows: 40px 40px 40px 40px;
+        justify-content: center;
+        align-items: center;
+        padding-top: 20px;
+        grid-row-gap: 10px;
+    }
+    .search-container{
+        grid-row: 1/2;
+        grid-column: 2/3;
+    }
+    .main-container{
+        grid-row: 2/3;
+        grid-column: 2/3;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+  /* PC 전용 스타일 */
+    body{
+        display: grid;
+        grid-template-rows: 48px 48px 1fr; /* menu search main */
+        grid-template-columns: 1fr;
+    }
+    .menu-container{
+        grid-row: 1/2;
+        display: grid;
+        grid-template-columns: 40px 40px 40px 40px;
+        justify-content: center;
+        align-items: center;
+        grid-column-gap: 10px;
+    }
+    .search-container{
+        grid-row: 2/3;
+    }
+    .main-container{
+        grid-row: 3/4;
+    }
+}
+
+

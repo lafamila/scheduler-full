@@ -1,0 +1,116 @@
+@media screen and (max-width: 767px) {
+  /* 스마트폰 전용 스타일 */
+    .main-container{
+        display: grid;
+        grid-template-rows: 20px 1fr;
+        grid-template-columns: 1fr;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        max-height: calc(100vh - 96px);
+    }
+    .date-container{
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        grid-column-gap: 10px;
+        grid-template-columns: 12px 60px 10px 60px 12px;
+    }
+    .date-container span{
+        text-align: center;
+    }
+    .date-control{
+        padding: 0;
+    }
+    .table-container{
+        overflow-y: auto;
+        max-height: calc(100vh - 136px);
+        height:100%;
+        align-items: start;
+    }
+    .table-container table{
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  /* 태블릿 전용 스타일 */
+    .main-container{
+        display: grid;
+        grid-template-rows: 20px 1fr;
+        grid-template-columns: 1fr;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        max-height: calc(100vh - 96px);
+    }
+    .date-container{
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        grid-column-gap: 10px;
+        grid-template-columns: 12px 60px 10px 60px 12px;
+    }
+    .date-container span{
+        text-align: center;
+    }
+    .date-control{
+        padding: 0;
+    }
+    .table-container{
+        overflow-y: auto;
+        max-height: calc(100vh - 136px);
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        justify-items: center;
+        align-items: start;
+        height:100%;
+    }
+    .table-container table{
+        width: 100%;
+        max-width: 768px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+  /* PC 전용 스타일 */
+    .main-container{
+        display: grid;
+        grid-template-rows: 20px 1fr;
+        grid-template-columns: 1fr;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        max-height: calc(100vh - 96px);
+    }
+    .date-container{
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        grid-column-gap: 10px;
+        grid-template-columns: 12px 60px 10px 60px 12px;
+    }
+    .date-container span{
+        text-align: center;
+    }
+    .date-control{
+        padding: 0;
+    }
+    .table-container{
+        overflow-y: auto;
+        max-height: calc(100vh - 136px);
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        justify-items: center;
+        align-items: start;
+        height:100%;
+    }
+    .table-container table{
+        width: 100%;
+        max-width: 768px;
+    }
+}
+
+

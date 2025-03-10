@@ -1,18 +1,19 @@
 {% extends "_template.html" %}
 {% block css %}
-    <link rel="stylesheet" href="/static/daily.css"/>
+    <link rel="stylesheet" href="/static/year.css"/>
 {% endblock %}
 {% block main %}
     <div class="date-container">
         <button class="date-control" id="date-prev"><</button>
-        <span id="date">Today</span>
+        <span id="date">2025년</span>
         <button class="date-control" id="date-next">></button>
     </div>
     <div class="table-container">
         <table>
             <colgroup>
+                <col width="20%"/>
                 <col width="10%"/>
-                <col width="80%"/>
+                <col width="60%"/>
                 <col width="10%"/>
             </colgroup>
             <thead>
@@ -21,16 +22,19 @@
             <tbody>
                 {% for i in range(100) %}
                 <tr>
+                    <td>1월</td>
                     <td>1</td>
                     <td>세수하기</td>
                     <td>done?</td>
                 </tr>
                 <tr>
+                    <td>2월</td>
                     <td>1</td>
                     <td>세수하기</td>
                     <td>done?</td>
                 </tr>
                 <tr>
+                    <td>3월</td>
                     <td>1</td>
                     <td>세수하기</td>
                     <td>done?</td>

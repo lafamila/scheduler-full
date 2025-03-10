@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO!</title>
+    <link rel="stylesheet" href="/static/global.css"/>
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+    <div class="menu-container">
+
+        <a href="/"><div class="menu-day">&nbsp;</div></a>
+        <a href="/week"><div class="menu-week">&nbsp;</div></a>
+        <a href="/month"><div class="menu-month">&nbsp;</div></a>
+        <a href="/year"><div class="menu-year">&nbsp;</div></a>
+
+    </div>
+    <div class="search-container">
+        <input type="text" id="search"/>
+    </div>
+    <div class="main-container">
+        {% block main %}
+        {% endblock %}
+    </div>
+</body>
+</html>
