@@ -3,26 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <title>TODO!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/global.css"/>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        Date.prototype.day = function(){
+            return ["일", "월", "화", "수", "목", "금", "토"].at(this.getDay());
+        }
+        Date.prototype.addDays = function(days) {
+            return new Date(this.getTime() + 24*60*60*1000*days);
+        }
+        Date.prototype.addMonths = function(months) {
+            let newDate = new Date(this);
+            for(let i=0;i<Math.abs(months);i++){
+                newDate.setMonth(this.getMonth() + (months >= 0 ? 1 : -1));
+                if (this.getDate() !== newDate.getDate()) {
+                    newDate.setDate(0); // 해당 월의 마지막 날로 설정
+                }
+            }
+            return newDate;
+        }
+        Date.prototype.toFormat = function() {
+            const offset = this.getTimezoneOffset();
+            let result = new Date(this.getTime() - (offset*60*1000))
+            return result.toISOString().split('T')[0]
+        }
+
+    </script>
+    <script>
+$.fn.yRowspan = function(colIdx, isStats) {
+    return this.each(function() {
+        var that;
+        $('tr', this).each(function(row) {
+            $('td', this).eq(colIdx).each(function(col) {
+                if ( $(this).html() == $(that).html() && (!isStats || isStats && $(this).prev().html() == $(that).prev().html()) ) {
+                    rowspan = $(that).attr("rowspan") || 1;
+                    rowspan = Number(rowspan)+1;
+                    $(that).attr("rowspan",rowspan);
+
+                    $(this).hide();
+
+                } else {
+                    that = this;
+                }
+                that = (that == null) ? this : that;
+            });
+        });
+    });
+};
+    </script>
     {% block css %}
     {% endblock %}
 </head>
 <body>
-    <div class="menu-container">
+    <div class="body">
+        <div class="menu-container">
 
-        <a href="/"><div class="menu-day">&nbsp;</div></a>
-        <a href="/week"><div class="menu-week">&nbsp;</div></a>
-        <a href="/month"><div class="menu-month">&nbsp;</div></a>
-        <a href="/year"><div class="menu-year">&nbsp;</div></a>
+            <a href="/"><div class="menu-day">&nbsp;</div></a>
+            <a href="/week"><div class="menu-week">&nbsp;</div></a>
+            <a href="/month"><div class="menu-month">&nbsp;</div></a>
+            <a href="/year"><div class="menu-year">&nbsp;</div></a>
 
+        </div>
+        <div class="search-container">
+            <input type="text" id="search"/>
+        </div>
+        <div class="main-container">
+            {% block main %}
+            {% endblock %}
+        </div>
     </div>
-    <div class="search-container">
-        <input type="text" id="search"/>
+    <div class="new-task">
+        <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <g id="Complete">
+                <g data-name="add" id="add-2">
+                    <g>
+                    <line fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" x2="12" y1="19" y2="5"/>
+                    <line fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="5" x2="19" y1="12" y2="12"/>
+                    </g>
+                </g>
+            </g>
+        </svg>
     </div>
-    <div class="main-container">
-        {% block main %}
-        {% endblock %}
+    <div class="modal">
+        <span class="modal-close">X</span>
+        <div class="modal-container">
+            <input type="date" value="" id="modal-date"/>
+            <input type="text" id="modal-task-title" placeholder="할일을 입력하고 엔터를 쳐주세요!"/>
+            <div class="modal-task-list">
+                <ol>
+                </ol>
+            </div>
+        </div>
     </div>
+    <script>
+        $(document).on("keyup", (e)=>{
+            if(e.keyCode == 27){
+                hideModal();
+            }
+        });
+        $(document).on("click", ".new-task", ()=>{
+            showModal((new Date()).toFormat());
+        });
+        $(document).on("click", ".modal-close", ()=>{
+            hideModal();
+        });
+        const showModal = (target_date) => {
+            //modal show
+            $(".modal").show(200, ()=>{
+                $("#modal-date").val(target_date);
+                $("#modal-date").trigger("change");
+            });
+            //modal-date 를 target_date 로 세팅하고 change trigger
+        };
+        const hideModal = () => {
+            //input 초기화
+            //modal hide
+            if($(".modal").css("display") != 'none'){
+                $(".modal").hide(200, ()=>{
+                    $("#modal-date").val('');
+                    $("#modal-date").trigger("change");
+                    $("#modal-task-title").val('');
+                    init();
+                });
+            }
+            //main-container 의 init() 실행하기
+        }
+        $("#modal-date").on("change", (e)=>{
+            let target_date = $("#modal-date").val();
+            if(target_date != ''){
+                $.ajax({
+                    url : '/api/schedule',
+                    method : 'get',
+                    data: {"target_date" : target_date}
+                }).done((data, textStatus, xhr) => {
+                    let ol = data.reduce((html, schedule, index) => {
+                        return html + `<li class="${schedule.task_status != 0 ? 'line-through' : ''}">${schedule.task_title}</li>`;
+                    }, '');
+                    $(".modal-task-list").find("ol").html(ol);
+                    {#$("#schedule-table").find("tbody").html(tbody);#}
+                });
+            }
+            else{
+                $(".modal-task-list").find("ol").html('');
+            }
+        });
+        $("#modal-task-title").on("keyup", (e)=>{
+            if(e.keyCode == 13){
+                let task_title = $("#modal-task-title").val();
+                let target_date = $("#modal-date").val();
+                if(target_date == ''){
+                    alert("날짜를 선택해주세요.");
+                    return;
+                }
+                if(task_title == '') return;
+                $.ajax({
+                    url : '/api/schedule',
+                    method : 'post',
+                    data: {"target_date" : target_date, "task_title" : task_title}
+                }).done((data, textStatus, xhr) => {
+
+                    $(".modal-task-list").find("ol").append(`<li class="">${task_title}</li>`);
+                    $("#modal-task-title").val('');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

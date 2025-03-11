@@ -1,3 +1,8 @@
+#date-start, #date-end{
+    text-align: center;
+    font-weight: 500;
+}
+
 @media screen and (max-width: 767px) {
   /* 스마트폰 전용 스타일 */
     .main-container{
@@ -14,7 +19,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 10px 60px 12px;
+        grid-template-columns: 24px 120px 10px 120px 24px;
     }
     .date-container span{
         text-align: center;
@@ -49,7 +54,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 10px 60px 12px;
+        grid-template-columns: 24px 120px 10px 120px 24px;
     }
     .date-container span{
         text-align: center;
@@ -89,7 +94,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 10px 60px 12px;
+        grid-template-columns: 24px 120px 10px 120px 24px;
     }
     .date-container span{
         text-align: center;

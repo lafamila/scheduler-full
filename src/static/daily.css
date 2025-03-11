@@ -1,3 +1,8 @@
+#date{
+    text-align: center;
+    font-weight: 500;
+}
+
 @media screen and (max-width: 767px) {
   /* 스마트폰 전용 스타일 */
     .main-container{
@@ -14,10 +19,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 12px;
-    }
-    #date{
-        text-align: center;
+        grid-template-columns: 24px 120px 24px;
     }
     .date-control{
         padding: 0;
@@ -42,17 +44,14 @@
         justify-content: center;
         align-items: center;
         padding: 10px;
-        max-height: calc(100vh - 96px);
+        max-height: calc(100vh - 48px);
     }
     .date-container{
         display: grid;
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 12px;
-    }
-    #date{
-        text-align: center;
+        grid-template-columns: 24px 120px 24px;
     }
     .date-control{
         padding: 0;
@@ -89,10 +88,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 12px;
-    }
-    #date{
-        text-align: center;
+        grid-template-columns: 24px 120px 24px;
     }
     .date-control{
         padding: 0;

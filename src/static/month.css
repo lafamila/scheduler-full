@@ -1,3 +1,43 @@
+.gray{
+    opacity: 0.3;
+    font-weight: 200;
+}
+.calendar-td+.calendar-td{
+    border-left: 1px solid var(--table-border-color);
+}
+.calendar-td{
+    text-align:center;
+    padding: 2px;
+}
+.calendar-td:not(.gray){
+    cursor: pointer;
+}
+.calendar-div{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 10px 1fr;
+    width: 100%;
+    height: 100px;
+}
+.calendar-schedule{
+    height: 90px;
+    overflow-y: auto;
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 15px;
+    font-size: 10px;
+    text-align: left;
+    padding-left: 5px;
+}
+.calendar-schedule > div{
+    border-radius: 3px;
+    background-color: var(--background);
+}
+.calendar-date{
+    font-size: 8px;
+    text-align: center;
+    font-weight: 500;
+}
 @media screen and (max-width: 767px) {
   /* 스마트폰 전용 스타일 */
     .main-container{
@@ -14,7 +54,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 12px;
+        grid-template-columns: 24px 120px 24px;
     }
     #date{
         text-align: center;
@@ -49,7 +89,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 12px;
+        grid-template-columns: 24px 120px 24px;
     }
     #date{
         text-align: center;
@@ -89,7 +129,7 @@
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
-        grid-template-columns: 12px 60px 12px;
+        grid-template-columns: 24px 120px 24px;
     }
     #date{
         text-align: center;

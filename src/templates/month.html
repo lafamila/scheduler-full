@@ -4,12 +4,32 @@
 {% endblock %}
 {% block main %}
     <div class="date-container">
-        <button class="date-control" id="date-prev"><</button>
-        <span id="date">1월</span>
-        <button class="date-control" id="date-next">></button>
+        <button class="date-control" id="date-prev">
+            <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <g>
+                        <polyline fill="none" id="Left" points="15.5 5 8.5 12 15.5 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </g>
+                </g>
+            </svg>
+        </button>
+        <div>
+            <input type="hidden" id="date-start"/>
+            <input type="hidden" id="date-end"/>
+            <div id="date"></div>
+        </div>
+        <button class="date-control" id="date-next">
+            <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <g>
+                        <polyline fill="none" id="Right" points="8.5 5 15.5 12 8.5 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </g>
+                </g>
+            </svg>
+        </button>
     </div>
     <div class="table-container">
-        <table>
+        <table id="schedule-table">
             <colgroup>
                 <col width="14.28%"/>
                 <col width="14.28%"/>
@@ -21,13 +41,13 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th>월요일</th>
-                    <th>화요일</th>
-                    <th>수요일</th>
-                    <th>목요일</th>
-                    <th>금요일</th>
-                    <th>토요일</th>
-                    <th>일요일</th>
+                    <th class="text-center">월</th>
+                    <th class="text-center">화</th>
+                    <th class="text-center">수</th>
+                    <th class="text-center">목</th>
+                    <th class="text-center">금</th>
+                    <th class="text-center">토</th>
+                    <th class="text-center">일</th>
                 </tr>
 
             </thead>
@@ -61,4 +81,126 @@
                 </tr>
             </tbody>
         </table>
-    </div>{% endblock %}
+    </div>
+    <script>
+    const get_schedule = (date_st, date_ed) => {
+        $.ajax({
+            url : '/api/schedule',
+            method : 'get',
+            data: {"target_date_st" : date_st, "target_date_ed": date_ed},
+            beforeSend: function( xhr ) {
+                let target_st_date = new Date(date_st);
+                let month_start = Math.abs(1-target_st_date.getDay());
+                let total_days = parseInt(date_ed.split("-")[2]);
+                let total_rows = Math.ceil((total_days + month_start) / 7);
+                let tbody = '';
+                for(let row=0;row<total_rows;row++){
+                    let td = ``;
+                    for(let col=0;col<7;col++){
+                        let _diff = row*7 + col - month_start;
+                        let _date = target_st_date.addDays(_diff).toFormat();
+                        td += `<td class="calendar-td ${_diff < 0 || _diff >= total_days ? 'gray' : ''}" data-date="${_date}">
+                                <div class="calendar-div">
+                                    <div class="calendar-date">
+                                        ${_date.split("-")[2]}
+                                    </div>
+                                    <div class="calendar-schedule">
+                                    </div>
+                                </div>
+                               </td>`;
+                    }
+                    tbody += `<tr>
+                                ${td}
+                              </tr>`;
+                }
+                $("#schedule-table").find("tbody").html(tbody);
+
+            },
+        }).done((data, textStatus, xhr) => {
+            $.each(data, function(pIndex, pValue){
+                let html = `<div class="${pValue.task_status != 0 ? 'line-through' : ''}">${pValue.task_title}</div>`;
+                $(document).find(`tbody td[data-date='${pValue.target_date}'] .calendar-schedule`).append(html);
+            });
+        });
+    };
+    const update_schedule = (index) => {
+        $.ajax({
+            url : `/api/schedule/${index}`,
+            method : 'patch'
+        }).done((data, textStatus, xhr) => {
+            let target_date_st = $("#date-start").data("date");
+            let target_date_ed = $("#date-end").data("date");
+            if(target_date_st === undefined || target_date_ed === undefined){
+                let target_date = new Date(`${(new Date()).getFullYear()}-${((new Date()).getMonth()+1).toString().padStart(2, '0')}-01`);
+                target_date_st = target_date.toFormat();
+                target_date_ed = target_date.addMonths(1).addDays(-1).toFormat();
+            }
+            set_date((new Date(target_date_st)), (new Date(target_date_ed)));
+        });
+
+    }
+    const set_date = (target_date_st, target_date_ed) => {
+        let date_text = `${target_date_st.getFullYear()}년 ${target_date_st.getMonth()+1}월`;
+        $("#date").html(date_text);
+        $("#date-start").data("date", target_date_st.toFormat());
+        $("#date-end").data("date", target_date_ed.toFormat());
+        get_schedule(target_date_st.toFormat(), target_date_ed.toFormat());
+    }
+    $(document).on("click", ".date-control", (e)=>{
+        let target_date_st = $("#date-start").data("date");
+        if(target_date_st === undefined){
+            let target_date = new Date(`${(new Date()).getFullYear()}-${((new Date()).getMonth()+1).toString().padStart(2, '0')}-01`);
+            target_date_st = target_date.toFormat();
+        }
+        if($(e.currentTarget).attr('id') == "date-prev"){
+            set_date((new Date(target_date_st)).addMonths(-1), (new Date(target_date_st)).addDays(-1));
+        }
+        else{
+            set_date((new Date(target_date_st)).addMonths(1), (new Date(target_date_st)).addMonths(2).addDays(-1));
+        }
+    });
+
+    $(document).on("click", ".schedule-done", (e)=>{
+        let index = $(e.currentTarget).data("index");
+        let title = $(e.currentTarget).data("title");
+        if(confirm(`"${title}"를 완료하셨나요?`)){
+            update_schedule(index);
+        }
+    })
+    $(document).ready(()=>{
+        {% if not target_month %}
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = today.getMonth()+1;
+        let target_date_st = new Date(`${year}-${month.toString().padStart(2, '0')}-01`)
+        let target_date_ed = target_date_st.addMonths(1).addDays(-1);
+        set_date(target_date_st, target_date_ed);
+        {% else %}
+        let ym = "{{ target_month }}";
+        let _year = parseInt(ym.split("-")[0]);
+        let _month = parseInt(ym.split("-")[1]);
+        let _target_date_st = new Date(`${_year}-${_month.toString().padStart(2, '0')}-01`)
+        let _target_date_ed = _target_date_st.addMonths(1).addDays(-1);
+        set_date(_target_date_st, _target_date_ed);
+        {% endif %}
+
+        //.getDay() 0~6 Sun~Sat
+    });
+    const init = () => {
+        let target_date_st = $("#date-start").data("date");
+        let target_date_ed = $("#date-end").data("date");
+        if(target_date_st === undefined){
+            target_date_st = new Date(`${(new Date()).getFullYear()}-${((new Date()).getMonth()+1).toString().padStart(2, '0')}-01`);
+            target_date_ed = target_date_st.addMonths(1).addDays(-1);
+        }
+        get_schedule(target_date_st, target_date_ed);
+    };
+    $(document).on("click", ".calendar-td:not(.gray)", (e)=>{
+        if(confirm(`${$(e.currentTarget).data("date")}로 이동하시겠습니까?`)){
+            location.href = `/?target_date=${$(e.currentTarget).data("date")}`;
+        }
+    });
+    </script>
+
+
+{% endblock %}

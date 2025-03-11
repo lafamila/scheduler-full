@@ -1,11 +1,155 @@
+:root {
+  --background: #FAF3E0;
+  --color: #232323;
+  --color-accent: #FFB300;
+  --important: #E65100;
+  --success: #008450;
+  --table-bg-color: #FAF3E0;
+  --table-text-color: #232323;
+  --table-header-bg: #E6D7BE;
+  --table-border-color: #B8A88C;
+  --table-highlight: #FFB300;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 18px;
+    text-align: left;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.date-control{
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    cursor:pointer;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+.schedule-done{
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    cursor:pointer;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+}
+
+th, td {
+    padding: 16px;
+    border-bottom: 2px solid var(--table-border-color);
+}
+
+table {
+    background: var(--table-header-bg);
+    color: var(--table-text-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+th {
+    background: var(--table-highlight);
+    color: #fff;
+    font-weight: bold;
+}
+
+/*
+배경: #121212 (Soft Black - 완전한 검정보다 부드러움)
+기본 텍스트: #EDEDED (Off White - 눈부심 방지)
+강조 텍스트: #F4B400 (Vibrant Amber - 따뜻하고 선명한 강조)
+버튼 & 액션 컬러: #FF6D00 (Burnt Orange - 눈길을 끄는 액션 색)
+
+배경: #FAF3E0 (Warm Ivory - 흰색보다 부드러움)
+기본 텍스트: #232323 (Rich Charcoal - 딥 블랙보다 눈에 덜 피로함)
+강조 텍스트: #FFB300 (Bold Mustard - 따뜻하고 모던한 포인트 컬러)
+버튼 & 액션 컬러: #E65100 (Deep Orange - 세련된 강조)
+*/
+
+
 body{
     margin: 0!important;
     padding: 0!important;
-    background-color: #eeeeee;
+    background-color: var(--background);
     min-width:300px;
     width: 100vw;
     height: 100vh;
-    color: black;
+    color: var(--color);
+    font-family: "Noto Sans KR", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+.body{
+    width: 100%;
+    height: 100%;
+}
+.text-center{
+    text-align: center;
+}
+.modal{
+    position: fixed;
+    left: 2vw;
+    top: 2vh;
+    margin: auto;
+    height: 96vh;
+    width: 96vw;
+    background-color: var(--background);
+    z-index: 9999;
+    box-shadow: 0 0 0 50vmax rgba(0,0,0,.5);
+    border-radius: 5px;
+    display: none;
+}
+.modal-close{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+}
+.modal-container{
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    margin: 20px;
+    display: grid;
+    grid-template-rows: 24px 24px 1fr;
+    grid-template-columns: 1fr;
+    grid-row-gap: 10px;
+}
+.new-task{
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    background-color: var(--background);
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: center;
+    box-shadow: 0px 17px 10px -10px rgba(0,0,0,0.4);
+    z-index: 999;
+}
+*{
+    stroke: var(--color);
+}
+.schedule-done *{
+    stroke: var(--success);
+
+}
+.modal-task-list{
+    height: 100%;
+    background-color: #e3e3e3;
+    overflow-y:auto;
+}
+.line-through{
+    text-decoration: line-through;
+    opacity: 0.4;
 }
 .menu-container div{
     width: 40px;
@@ -19,17 +163,44 @@ body{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    justify-content: center;
+    justify-items: center;
     align-items: center;
     padding-left: 10px;
     padding-right: 10px;
 
 }
-#search{
+input[type='text'], input[type='date']{
     border-radius: 5px;
-    border: none;
+    border: 0.5px solid #999;
     outline: none;
     height: 24px;
+    padding-left: 5px;
+}
+input[type='date']{
+    position: relative;
+}
+input[type='date']::-webkit-calendar-picker-indicator {
+    position:absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 24px;
+    background: transparent;
+    color: transparent;
+  }
+
+input[type="date"]::-webkit-clear-button,
+input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+}
+#search{
+    border-radius: 5px;
+    border: 0.5px solid #999;
+    outline: none;
+    height: 24px;
+    max-width: 768px;
+    width: 100%;
+    padding-left: 5px;
 }
 input:focus {outline: none;}
 
@@ -60,22 +231,22 @@ input:focus {outline: none;}
     background-image: url(/static/icons/after.png);
 }
 
-.menu-container{
-    background-color: blue;
-    opacity: 0.5;
-}
-.search-container{
-    background-color: red;
-    opacity: 0.5;
-}
-.main-container{
-    background-color: green;
-    opacity: 0.5;
-}
+/*.menu-container{*/
+/*    background-color: blue;*/
+/*    opacity: 0.5;*/
+/*}*/
+/*.search-container{*/
+/*    background-color: red;*/
+/*    opacity: 0.5;*/
+/*}*/
+/*.main-container{*/
+/*    background-color: green;*/
+/*    opacity: 0.5;*/
+/*}*/
 
 @media screen and (max-width: 767px) {
   /* 스마트폰 전용 스타일 */
-    body{
+    .body{
         display: grid;
         grid-template-rows: 48px 1fr 48px; /*search main menu*/
         grid-template-columns: 1fr;
@@ -87,9 +258,11 @@ input:focus {outline: none;}
         justify-content: center;
         align-items: center;
         grid-column-gap: 10px;
+        box-shadow: 0px 10px 10px 10px var(--color);
     }
     .search-container{
         grid-row: 1;
+        box-shadow: 10px 0px 10px 0px var(--color);
     }
     .main-container{
         grid-row: 2;
@@ -98,7 +271,7 @@ input:focus {outline: none;}
 
 @media screen and (min-width: 768px) and (max-width: 1023px) {
   /* 태블릿 전용 스타일 */
-    body{
+    .body{
         display: grid;
         grid-template-rows: 48px 1fr; /* search main */
         grid-template-columns: 48px 1fr; /* menu search+main*/
@@ -111,10 +284,12 @@ input:focus {outline: none;}
         align-items: center;
         padding-top: 20px;
         grid-row-gap: 10px;
+        box-shadow: 0px 10px 10px 0px var(--color);
     }
     .search-container{
         grid-row: 1/2;
         grid-column: 2/3;
+        box-shadow: 10px 0px 10px 0px var(--color);
     }
     .main-container{
         grid-row: 2/3;
@@ -124,7 +299,7 @@ input:focus {outline: none;}
 
 @media screen and (min-width: 1024px) {
   /* PC 전용 스타일 */
-    body{
+    .body{
         display: grid;
         grid-template-rows: 48px 48px 1fr; /* menu search main */
         grid-template-columns: 1fr;
@@ -139,6 +314,7 @@ input:focus {outline: none;}
     }
     .search-container{
         grid-row: 2/3;
+        box-shadow: 0px 10px 5px -10px var(--color);
     }
     .main-container{
         grid-row: 3/4;

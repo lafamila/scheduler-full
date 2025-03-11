@@ -4,39 +4,135 @@
 {% endblock %}
 {% block main %}
     <div class="date-container">
-        <button class="date-control" id="date-prev"><</button>
-        <span id="date">Today</span>
-        <button class="date-control" id="date-next">></button>
+        <button class="date-control" id="date-prev">
+            <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <g>
+                        <polyline fill="none" id="Left" points="15.5 5 8.5 12 15.5 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </g>
+                </g>
+            </svg>
+        </button>
+        <div id="date">Today</div>
+        <button class="date-control" id="date-next">
+            <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <g>
+                        <polyline fill="none" id="Right" points="8.5 5 15.5 12 8.5 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </g>
+                </g>
+            </svg>
+        </button>
     </div>
     <div class="table-container">
-        <table>
+        <table id="schedule-table">
             <colgroup>
                 <col width="10%"/>
                 <col width="80%"/>
                 <col width="10%"/>
             </colgroup>
             <thead>
-
+                <tr>
+                    <th class="text-center">#</th>
+                    <th>내용</th>
+                    <th class="text-center">-</th>
+                </tr>
             </thead>
             <tbody>
-                {% for i in range(100) %}
-                <tr>
-                    <td>1</td>
-                    <td>세수하기</td>
-                    <td>done?</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>세수하기</td>
-                    <td>done?</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>세수하기</td>
-                    <td>done?</td>
-                </tr>
-                {% endfor %}
+
             </tbody>
         </table>
     </div>
+    <script>
+    const get_schedule = (target_date) => {
+        $.ajax({
+            url : '/api/schedule',
+            method : 'get',
+            data: {"target_date" : target_date}
+        }).done((data, textStatus, xhr) => {
+            if(data.length > 0){
+                let tbody = data.reduce((html, schedule, index) => {
+                    let btn = `<button class="schedule-done" data-index="${schedule.task_id}" data-title="${schedule.task_title}">
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20.0001 7L9.0001 18L4 13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>`;
+                    return html + `<tr>
+                        <td class="text-center">${schedule.task_status == 0 ? (index+1) : ''}</td>
+                        <td class="${schedule.task_status == 0 ? '' : 'line-through'}">${schedule.task_title}</td>
+                        <td class="text-center">${schedule.task_status == 0 ? btn : ''}</td>
+                    </tr>`;
+                }, '');
+                $("#schedule-table").find("tbody").html(tbody);
+            }
+            else{
+                $("#schedule-table").find("tbody").html(`<tr><td colspan="3" class="text-center">등록된 내용이 없습니다.</td></tr>`);
+
+            }
+        });
+    };
+    const update_schedule = (index) => {
+        $.ajax({
+            url : `/api/schedule/${index}`,
+            method : 'patch'
+        }).done((data, textStatus, xhr) => {
+            let target_date = $("#date").data("date");
+            if(target_date === undefined){
+                target_date = (new Date()).toFormat();
+            }
+            set_date((new Date(target_date)));
+        });
+
+    }
+    const set_date = (target_date) => {
+        let date_text = target_date.toFormat();
+        if(date_text === (new Date()).toFormat()){
+            date_text = 'Today';
+        }
+        else{
+            date_text += ` (${target_date.day()})`;
+        }
+        $("#date").html(date_text);
+        $("#date").data("date", target_date.toFormat());
+        get_schedule(target_date.toFormat());
+    }
+    $(document).on("click", ".date-control", (e)=>{
+        let target_date = $("#date").data("date");
+        if(target_date === undefined){
+            target_date = (new Date()).toFormat();
+        }
+        if($(e.currentTarget).attr('id') == "date-prev"){
+            set_date((new Date(target_date)).addDays(-1));
+        }
+        else{
+            set_date((new Date(target_date)).addDays(1));
+        }
+    });
+
+    $(document).on("click", ".schedule-done", (e)=>{
+        let index = $(e.currentTarget).data("index");
+        let title = $(e.currentTarget).data("title");
+        if(confirm(`"${title}"를 완료하셨나요?`)){
+            update_schedule(index);
+        }
+    })
+    $(document).ready(()=>{
+        {% if not target_date %}
+        let today = new Date();
+        set_date(today);
+        {% else %}
+        let target_date = new Date("{{ target_date }}");
+        set_date(target_date);
+        {% endif %}
+        //.getDay() 0~6 Sun~Sat
+    });
+    const init = () => {
+        let target_date = $("#date").data("date");
+        if(target_date === undefined){
+            target_date = (new Date()).toFormat();
+        }
+        get_schedule(target_date);
+    };
+
+    </script>
 {% endblock %}
