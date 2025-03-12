@@ -195,10 +195,18 @@
         }
         get_schedule(target_date_st, target_date_ed);
     };
-
+        const longPressEvent = (e) => {
+            showModal($(e.currentTarget).data("date"));
+        }
+        const clickEvent = (e) => {
+            if(confirm(`${$(e.currentTarget).data("date")}로 이동하시겠습니까?`)){
+                location.href = `/?target_date=${$(e.currentTarget).data("date")}`;
+            }
+        }
         let touchStartTime = 0;
         let longPressTriggered = false;
         let clickTriggered = false;
+        let timer;
         const clickStartEvent = (e) => {
             touchStartTime = new Date().getTime(); // 터치 시작 시간 저장
             longPressTriggered = false;
@@ -206,7 +214,7 @@
             setTimeout(() => {
                 if (new Date().getTime() - touchStartTime >= 500 && !clickTriggered) { // 0.5초 이상이면 long touch 실행
                     longPressTriggered = true;
-                    showModal($(e.currentTarget).data("date"));
+                    longPressEvent(e);
                 }
             }, 500);
         }
@@ -214,27 +222,37 @@
             let touchDuration = new Date().getTime() - touchStartTime;
             if (!longPressTriggered && touchDuration < 500) { // 0.5초 미만이면 클릭 처리
                 clickTriggered = true;
-                if(confirm(`${$(e.currentTarget).data("date")}로 이동하시겠습니까?`)){
-                    location.href = `/?target_date=${$(e.currentTarget).data("date")}`;
-                }
+                clickEvent(e);
             }
         }
         $(document).on("touchstart", ".calendar-td:not(.gray)", clickStartEvent);
         $(document).on("touchend", ".calendar-td:not(.gray)", clickEndEvent);
-        $(document).on("mousedown", ".calendar-td:not(.gray)", (e)=>{
+        $(document).on("click", ".calendar-td:not(.gray)", (e)=>{
             if(!window.mobileAndTabletCheck()){
-                clickStartEvent(e); //mobile/tablet 체크를 한 뒤에 event 를 달면 개발과정에서 디버깅할때 디바이스 바꾸면 새로고침 필요
+                if(timer){
+                    clearTimeout(timer);
+                    timer = null;
+                }
+                else{
+                    timer = setTimeout(function(){
+
+                        clickEvent(e);
+                        clearTimeout(timer);
+                        timer = null;
+                    }, 250);
+                }
+
             }
         });
-        $(document).on("mouseup", ".calendar-td:not(.gray)", (e)=>{
+        $(document).on("dblclick", ".calendar-td:not(.gray)", (e)=>{
             if(!window.mobileAndTabletCheck()){
-                clickEndEvent(e);
+                longPressEvent(e);
             }
         });
 
 
         $(document).on("touchmove", ".calendar-td:not(.gray)", (e)=>{
-                clickTriggered = true;
+            clickTriggered = true;
         });
 
 
