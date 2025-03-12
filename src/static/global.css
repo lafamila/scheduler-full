@@ -1,16 +1,25 @@
 :root {
-  --background: #FAF3E0;
-  --color: #232323;
-  --color-accent: #FFB300;
-  --important: #E65100;
-  --success: #008450;
-  --table-bg-color: #FAF3E0;
-  --table-text-color: #232323;
-  --table-header-bg: #E6D7BE;
-  --table-border-color: #B8A88C;
-  --table-highlight: #FFB300;
+    --background: #FAE9D4;
+    --color: #403B36;
+    --color-accent: #FFB300;
+    --important: #E65100;
+    --success: #008450;
+    --table-bg-color: #FAF3E0;
+    --table-text-color: #232323;
+    --table-header-bg: #FCF4E6;
+    --table-border-color: #B89E85;
+    --table-highlight: #DFC4A8;
+    --table-text-highlight: #3D2F26;
+    --table-schedule-bg-color: #D28F5C;
 }
-
+*{
+        -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 table {
     width: 100%;
     border-collapse: collapse;
@@ -54,7 +63,7 @@ table {
 
 th {
     background: var(--table-highlight);
-    color: #fff;
+    color: var(--table-text-highlight);
     font-weight: bold;
 }
 
@@ -105,8 +114,8 @@ body{
 }
 .modal-close{
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 10px;
+    top: 10px;
     cursor: pointer;
 }
 .modal-container{
@@ -144,8 +153,10 @@ body{
 }
 .modal-task-list{
     height: 100%;
-    background-color: #e3e3e3;
+    background-color: var(--table-bg-color);
     overflow-y:auto;
+    border: 1px solid #D2B89A;
+    border-radius: 1px;
 }
 .line-through{
     text-decoration: line-through;
@@ -175,6 +186,9 @@ input[type='text'], input[type='date']{
     outline: none;
     height: 24px;
     padding-left: 5px;
+}
+#modal-date{
+    max-width: 200px;
 }
 input[type='date']{
     position: relative;
