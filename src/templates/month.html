@@ -41,13 +41,13 @@
             </colgroup>
             <thead>
                 <tr>
+                    <th class="text-center">일</th>
                     <th class="text-center">월</th>
                     <th class="text-center">화</th>
                     <th class="text-center">수</th>
                     <th class="text-center">목</th>
                     <th class="text-center">금</th>
                     <th class="text-center">토</th>
-                    <th class="text-center">일</th>
                 </tr>
 
             </thead>
@@ -90,8 +90,9 @@
             data: {"target_date_st" : date_st, "target_date_ed": date_ed},
             beforeSend: function( xhr ) {
                 let target_st_date = new Date(date_st);
-                let month_start = Math.abs(1-target_st_date.getDay());
+                let month_start = target_st_date.getDay();
                 let total_days = parseInt(date_ed.split("-")[2]);
+                console.log(date_ed, total_days);
                 let total_rows = Math.ceil((total_days + month_start) / 7);
                 let tbody = '';
                 for(let row=0;row<total_rows;row++){

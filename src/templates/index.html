@@ -117,6 +117,7 @@
         }
     })
     $(document).ready(()=>{
+        $(document).find(".new-task").show();
         {% if not target_date %}
         let today = new Date();
         set_date(today);
@@ -133,6 +134,13 @@
         }
         get_schedule(target_date);
     };
+    $(document).on("click", ".new-task", ()=>{
+        let target_date = $("#date").data("date");
+        if(target_date === undefined){
+            target_date = (new Date()).toFormat();
+        }
+        showModal(target_date);
+    });
 
     </script>
 {% endblock %}

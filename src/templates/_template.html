@@ -23,11 +23,13 @@
         }
         Date.prototype.addMonths = function(months) {
             let newDate = new Date(this);
+            let thisDate = new Date(this);
             for(let i=0;i<Math.abs(months);i++){
-                newDate.setMonth(this.getMonth() + (months >= 0 ? 1 : -1));
-                if (this.getDate() !== newDate.getDate()) {
+                newDate.setMonth(thisDate.getMonth() + (months >= 0 ? 1 : -1));
+                if (thisDate.getDate() !== newDate.getDate()) {
                     newDate.setDate(0); // 해당 월의 마지막 날로 설정
                 }
+                thisDate = newDate;
             }
             return newDate;
         }
@@ -81,7 +83,7 @@ $.fn.yRowspan = function(colIdx, isStats) {
             {% endblock %}
         </div>
     </div>
-    <div class="new-task">
+    <div class="new-task" style="display:none;">
         <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <g id="Complete">
                 <g data-name="add" id="add-2">
@@ -113,9 +115,6 @@ $.fn.yRowspan = function(colIdx, isStats) {
             if(e.keyCode == 27){
                 hideModal();
             }
-        });
-        $(document).on("click", ".new-task", ()=>{
-            showModal((new Date()).toFormat());
         });
         $(document).on("click", ".modal-close", ()=>{
             hideModal();
