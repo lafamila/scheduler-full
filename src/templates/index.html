@@ -28,20 +28,55 @@
         <table id="schedule-table">
             <colgroup>
                 <col width="10%"/>
-                <col width="80%"/>
+                <col width="10%"/>
+                <col width="60%"/>
+                <col width="10%"/>
                 <col width="10%"/>
             </colgroup>
             <thead>
                 <tr>
+                    <th class="text-center">복사</th>
                     <th class="text-center">#</th>
                     <th>내용</th>
-                    <th class="text-center">-</th>
+                    <th class="text-center">완료</th>
+                    <th class="text-center">삭제</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+    </div>
+    <div class="modal-warning">
+        <span class="modal-close-warning">
+            <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 5L5 19M5.00001 5L19 19" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+        <div class="modal-container">
+            <div style="font-weight:bold;">
+                <span id="period-task-title" style="font-size:24px;"></span>
+                <input type="hidden" id="period-task-id"/>
+            </div>
+            <div style="padding-top:20px;">주기</div>
+            <div style="padding-top:20px;">
+                <div>
+                    <input type="radio" value="week" id="period-week" name="period"/>
+                    <label for="period-week">매주</label>
+                </div>
+                <div>
+                    <input type="radio" value="month" id="period-month" name="period"/>
+                    <label for="period-month">매월</label>
+                </div>
+                <div>
+                    <input type="radio" value="year" id="period-year" name="period"/>
+                    <label for="period-year">매년</label>
+                </div>
+                <div style="position:absolute;right:20px;bottom:20px;">
+                    <button class="period-submit" id="period-submit">등록하기</button>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
     const get_schedule = (target_date) => {
@@ -52,29 +87,109 @@
         }).done((data, textStatus, xhr) => {
             if(data.length > 0){
                 let tbody = data.reduce((html, schedule, index) => {
-                    let btn = `<button class="schedule-done" data-index="${schedule.task_id}" data-title="${schedule.task_title}">
+                    let copy_btn = `<button class="schedule-copy" data-index="${schedule.task_id}" data-title="${schedule.task_title}">
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.15" d="M3 12C3 10.8954 3.89543 10 5 10H12C13.1046 10 14 10.8954 14 12V19C14 20.1046 13.1046 21 12 21H5C3.89543 21 3 20.1046 3 19V12Z" fill="#000000"/>
+                                    <path d="M17.5 14H19C20.1046 14 21 13.1046 21 12V5C21 3.89543 20.1046 3 19 3H12C10.8954 3 10 3.89543 10 5V6.5M5 10H12C13.1046 10 14 10.8954 14 12V19C14 20.1046 13.1046 21 12 21H5C3.89543 21 3 20.1046 3 19V12C3 10.8954 3.89543 10 5 10Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>`
+                    let delete_btn = `<button class="schedule-delete" data-index="${schedule.task_id}" data-title="${schedule.task_title}" data-parent="${schedule.parent_task_id ? schedule.parent_task_id : 0}">
+                                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M19 5L5 19M5.00001 5L19 19" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>`
+                    let done_btn = `<button class="schedule-done" data-index="${schedule.task_id}" data-title="${schedule.task_title}">
                                     <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20.0001 7L9.0001 18L4 13" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>`;
                     return html + `<tr>
+                        <td class="text-center">${copy_btn}</td>
                         <td class="text-center">${schedule.task_status == 0 ? (index+1) : ''}</td>
                         <td class="${schedule.task_status == 0 ? '' : 'line-through'}">${schedule.task_title}</td>
-                        <td class="text-center">${schedule.task_status == 0 ? btn : ''}</td>
+                        <td class="text-center">${schedule.task_status == 0 ? done_btn : ''}</td>
+                        <td class="text-center">${delete_btn}</td>
                     </tr>`;
                 }, '');
                 $("#schedule-table").find("tbody").html(tbody);
             }
             else{
-                $("#schedule-table").find("tbody").html(`<tr><td colspan="3" class="text-center">등록된 내용이 없습니다.</td></tr>`);
+                $("#schedule-table").find("tbody").html(`<tr><td colspan="5" class="text-center">등록된 내용이 없습니다.</td></tr>`);
 
             }
         });
     };
+    const hideWarning = ()=>{
+        if($(".modal-warning").css("display") != 'none'){
+            $(".modal-warning").hide(200, ()=>{
+                $("#period-task-title").html("");
+                $("#period-task-id").val("");
+                $(document).find("[name='period']").prop("checked", false);
+                init();
+            });
+        }
+    }
+    const showWarning = (index, title)=> {
+        $(".modal-warning").show(200, ()=>{
+            $("#period-task-title").html(title);
+            $("#period-task-id").val(index);
+        });
+    }
+    $(document).on("click", ".modal-close-warning", ()=>{
+        hideWarning();
+
+    });
+    $(document).on("click", "#period-submit", ()=>{
+        let period = $(document).find("[name='period']:checked").val();
+        let title = $(document).find("#period-task-title").html();
+        let index = $(document).find("#period-task-id").val();
+        if(period === undefined){
+            alert("주기를 선택해주세요.");
+            return;
+        }
+        let period_text = {"year" : "매년(30년)", "month" : "매달(10년)", "week" : "매주(1년)"}
+        if(confirm(`"${title}"를 ${period_text[period]} 복사하시겠습니까?`)){
+            copy_schedule(index, period);
+        }
+    });
+
+
+    const copy_schedule = (index, period) => {
+        $.ajax({
+            url : `/api/schedule/every/${period}`,
+            method : 'post',
+            data: {"task_id" : index}
+        }).done((data, textStatus, xhr) => {
+            let target_date = $("#date").data("date");
+            if(target_date === undefined){
+                target_date = (new Date()).toFormat();
+            }
+            set_date((new Date(target_date)));
+            hideWarning();
+        });
+
+    }
     const update_schedule = (index) => {
         $.ajax({
             url : `/api/schedule/${index}`,
             method : 'patch'
+        }).done((data, textStatus, xhr) => {
+            let target_date = $("#date").data("date");
+            if(target_date === undefined){
+                target_date = (new Date()).toFormat();
+            }
+            set_date((new Date(target_date)));
+        });
+
+    }
+    const delete_schedule = (index, parent_index) => {
+        console.log(parent_index);
+        if(parseInt(parent_index) != 0){
+            parent_index = confirm("이후 반복 복사된 모든 일정을 삭제하시겠습니까?") ? parent_index : 0;
+        }
+        $.ajax({
+            url : `/api/schedule/${index}/${parent_index}`,
+            method : 'delete'
         }).done((data, textStatus, xhr) => {
             let target_date = $("#date").data("date");
             if(target_date === undefined){
@@ -109,11 +224,25 @@
         }
     });
 
+    $(document).on("click", ".schedule-copy", (e)=>{
+        let index = $(e.currentTarget).data("index");
+        let title = $(e.currentTarget).data("title");
+        showWarning(index, title);
+
+    })
     $(document).on("click", ".schedule-done", (e)=>{
         let index = $(e.currentTarget).data("index");
         let title = $(e.currentTarget).data("title");
         if(confirm(`"${title}"를 완료하셨나요?`)){
             update_schedule(index);
+        }
+    })
+    $(document).on("click", ".schedule-delete", (e)=>{
+        let index = $(e.currentTarget).data("index");
+        let title = $(e.currentTarget).data("title");
+        let parent = $(e.currentTarget).data("parent");
+        if(confirm(`"${title}"를 삭제하시겠습니까?`)){
+            delete_schedule(index, parent);
         }
     })
     $(document).ready(()=>{
