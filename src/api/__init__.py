@@ -10,7 +10,7 @@ def update_schedule_auto():
     params = {"today": datetime.now(tz=KST).strftime("%Y-%m-%d")}
     with Connector() as conn:
         curs = conn.cursor()
-        # curs.execute("UPDATE tasks SET target_date=%(today)s WHERE task_status=0 AND target_date < %(today)s", params)
+        curs.execute("UPDATE tasks SET target_date=%(today)s WHERE task_status=0 AND target_date < %(today)s", params)
 
 
 @bp.route('/schedule', methods=['GET'])
